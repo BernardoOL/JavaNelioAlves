@@ -2,38 +2,34 @@ package application;
 
 
 import java.io.*;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        String[] lines = new String[] {"Good morning", "Good afternoon", "Good night"};
+        Scanner sc = new Scanner(System.in);
 
-        String path = "C:\\temp\\out.txt";//Colocar o caminho do seu arquivo
+        System.out.println("Enter a folder path: ");
+        String strPath = sc.nextLine();
 
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter(path, true))){//Tire o ", true" caso queira recriar o arquivo ao invés de adicionar conteúdo dentro dele
+        File path = new File(strPath);
 
-            for(String line : lines){
-                bw.write(line);
-                bw.newLine();
-            }
-
-        }catch (IOException e){
-            e.printStackTrace();
+        //Lendo pastas
+        File[] folders = path.listFiles(File::isDirectory);
+        System.out.println("FOLDERS:");
+        for(File folder: folders){
+            System.out.println(folder);
         }
 
+        //Lendo Arquivos
+        File[] files = path.listFiles(File::isFile);
+        System.out.println("FILES:");
+        for(File file: files){
+            System.out.println(file);
+        }
+
+        boolean success = new File(strPath + "\\subdir").mkdir();
+        System.out.println("Directory created success successfully: "+ success);
+
+        sc.close();
     }
 }
-
-//LER O ARQUIVO
-//        String path = "C:\\temp\\in.txt";//Colocar o caminho do seu arquivo
-//
-//        try (BufferedReader br = new BufferedReader(new FileReader(path))){
-//            String line = br.readLine();
-//
-//            while(line != null){
-//                System.out.println(line);
-//                line = br.readLine();
-//            }
-//
-//        }catch (IOException e){
-//            System.out.println(e.getMessage());
-//        }
