@@ -13,23 +13,8 @@ public class Main {
 
         File path = new File(strPath);
 
-        //Lendo pastas
-        File[] folders = path.listFiles(File::isDirectory);
-        System.out.println("FOLDERS:");
-        for(File folder: folders){
-            System.out.println(folder);
-        }
-
-        //Lendo Arquivos
-        File[] files = path.listFiles(File::isFile);
-        System.out.println("FILES:");
-        for(File file: files){
-            System.out.println(file);
-        }
-
-        boolean success = new File(strPath + "\\subdir").mkdir();
-        System.out.println("Directory created success successfully: "+ success);
-
-        sc.close();
+        System.out.println("getName: " + path.getName());
+        System.out.println("getParent: " + path.getParent());
+        System.out.println("getPath: " + path.getPath());
     }
 }
