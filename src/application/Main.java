@@ -1,61 +1,46 @@
 package application;
 
 
-import model.Produto;
+import model.Contract;
+import model.entities.Installment;
+import services.ContractService;
+import services.PaypalService;
 
-import java.io.*;
-import java.util.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-
         Locale.setDefault(Locale.US);
         Scanner sc = new Scanner(System.in);
 
-        List<Produto> list = new ArrayList<>();
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        System.out.println("Enter file path: ");
-        String sourceFileStr = sc.nextLine();
+        System.out.println("Entre com os dados do contrato: ");
+        System.out.print("Número: ");
+        int number = sc.nextInt();
 
-        File sourceFile = new File(sourceFileStr);
+        System.out.print("Data (dd/MM/yyyy): ");
+        LocalDate date = LocalDate.parse(sc.next(), fmt);
 
-        String sourceFolderStr = sourceFile.getParent();
+        System.out.print("Valor do contrato: ");
+        double totalValue = sc.nextDouble();
 
-        boolean sucecess = new File(sourceFolderStr + "\\out").mkdir();
+        Contract objContract = new Contract(number, date, totalValue);
 
-        System.out.println("Directory created: " + sucecess);
+        System.out.print("Entre com o número de parcelas: ");
+        int installments = sc.nextInt();
 
-        String targetFileStr = sourceFolderStr + "\\out\\summary.csv";
+        ContractService service = new ContractService(new PaypalService());
 
-        try(BufferedReader br = new BufferedReader(new FileReader(sourceFileStr))){
+        service.processContract(objContract, installments);
 
-            String itemCsv = br.readLine();
-            while (itemCsv != null){
-                String[] fields = itemCsv.split(",");
-                String name = fields[0];
-                double price = Double.parseDouble(fields[1]);
-                int quantity = Integer.parseInt(fields[2]);
-
-                list.add(new Produto(name, price, quantity));
-
-                itemCsv = br.readLine();
-            }
-
-            try(BufferedWriter bw = new BufferedWriter(new FileWriter(targetFileStr))){
-
-                for(Produto item : list){
-                    bw.write(item.getName() + "," + String.format("%.2f", item.total()));
-                    bw.newLine();
-                }
-
-                System.out.println(targetFileStr + " CREATED!");
-
-            }catch (IOException e){
-                System.out.println("Erro writing file: " + e.getMessage());
-            }
-
-        }catch (Exception e){
-            System.out.println("Error reading file: " + e.getMessage());
+        System.out.println("Parcelas: ");
+        for(Installment installment : objContract.getInstalments()){
+            System.out.println(installment);
         }
+
     }
 }
